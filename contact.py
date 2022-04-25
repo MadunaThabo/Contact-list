@@ -1,18 +1,24 @@
 from http import server
 from http.server import HTTPServer,BaseHTTPRequestHandler
 from http.server import HTTPServer
+from delete import deleteContact
+from modify import modifyContact
 
 from viewAll import viewAll
+from add import addLine
+from search import searchContact
 
 
 HOST = 'localhost'
-PORT = 5556
+PORT = 5550
 result = ""
+searchTable=""
 counter=0
 class HTTPR(BaseHTTPRequestHandler):
     def do_GET(self):
         global result
         global counter
+        global searchTable
         self.send_response(200)
         self.send_header("Content-type","text/html")
         self.end_headers()
@@ -45,42 +51,6 @@ class HTTPR(BaseHTTPRequestHandler):
                 margin-right: auto;
             }
            
-            input{
-                float: left;
-                width: 460px;
-                height: 40px;
-                padding: 0 10px;
-                border: 0;
-                border-bottom: 3px solid #fff;
-                background-color: transparent;
-                color: #fff;
-                font-family: 'Indie Flower', cursive;
-                font-size: 22px;
-                position: relative;
-                z-index: 99;
-                &:focus{
-                outline: 0;
-                }
-                &.white{
-                background-color: #E74C3C;
-                }
-            }
-
-            input:focus + span{
-                span{
-                cursor: initial;
-                position: absolute;
-                top: -35px;
-                color: #2C3E50;
-                }
-                &:before{
-                width: 50%;
-                }
-                &:after{
-                width: 50%;
-                }
-            }
-
             span.fixed{
                 span{
                 top: -35px;
@@ -90,68 +60,100 @@ class HTTPR(BaseHTTPRequestHandler):
             
             </style>
             </head>
-            <body>
+            <body>                
+                <h1>Search Contact</h1>
+                    <form method="get">
+                        <label for="SearchName">Name:</label>
+                        <input type="text" id="searchName" name="searchName">
+                        <label for="searchSName">&nbsp;&nbsp;&nbsp;&nbsp;Surname:</label>
+                        <input type="text" id="searchSName" name="searchSName">&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="submit" value="Search contact"><br/>
+                    </form>"""+ searchTable + """
+                <h1>Add Contacts</h1>
+                    <form method="get">
+                        <label for="addName">Name:</label>
+                        <input type="text" id="addName" name="addName">
+                        <label for="addSName">&nbsp;&nbsp;&nbsp;&nbsp;Surname:</label>
+                        <input type="text" id="addSName" name="addSName">
+                        <label for="addNum">&nbsp;&nbsp;&nbsp;&nbsp;Numbers:</label>
+                        <input type="text" id="addNum" name="addNum">&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="submit" value="add contact"><br/>
+                    </form>
+                    
+                <h1>Delete Contact</h1>
+                    <form method="get">
+                        <label for="delName">Name:</label>
+                        <input type="text" id="delName" name="delName">
+                        <label for="delSName">&nbsp;&nbsp;&nbsp;&nbsp;Surname:</label>
+                        <input type="text" id="delSName" name="delSName">&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="submit" value="delete contact"><br/>
+                    </form>
+                
+                    <h1>Modify Contact</h1>
+                    <form method="get">
+                        <label for="modifyName">Name:</label>
+                        <input type="text" id="modifyName" name="modifyName">
+                        <label for="modifySName">&nbsp;&nbsp;&nbsp;&nbsp;Surname:</label>
+                        <input type="text" id="modifySName" name="modifySName"><br/><br/>
+                        <label for="newName">New Name:</label>
+                        <input type="text" id="newName" name="newName">
+                        <label for="newSName">&nbsp;&nbsp;&nbsp;&nbsp;New Surname:</label>
+                        <input type="text" id="newSName" name="newSName">
+                        <label for="modifyNum">&nbsp;&nbsp;&nbsp;&nbsp;New Numbers:</label>
+                        <input type="text" id="modifyNum" name="modifyNum">&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="submit" value="Modify contact"><br/>
+                    </form>
+
+                <h1> """+ result + """</h1>
                 <h1>Contact List</h1>
-               <table class="table1">
+                    <table class="table1">
                     <tr>
                         <th>Name</th>
                         <th>Surname</th>
                         <th>Cellphone Number</th>
                     </tr>
-                """+ viewAll()+ """    
-                </table>           
+                    """+ viewAll() + """    
+                </table>
             </body></html>\r\n\r\n""","utf-8"))
         if(counter==0):
             htmlWrite()
             counter=counter+1
         else:
-            if(self.path.endswith("=")):
-                i = 0
-                zero=0
-                while(i in range(len(result))):
-                    if(result[i] == "/"):
-                        if(result[i+1]=="0"):
-                            result = "Error" 
-                            zero=1
-                    i =i+1      
-                if(zero==0):
-                    result=str(eval(result))
-
-            elif(self.path.endswith("0")):
-                result+="0"
-            elif(self.path.endswith("1")):
-                result+="1"
-            elif(self.path.endswith("2")):
-                result+="2"
-            elif(self.path.endswith("3")):
-                result+="3"
-            elif(self.path.endswith("4")):
-                result+="4"
-            elif(self.path.endswith("5")):
-                result+="5"
-            elif(self.path.endswith("6")):
-                result+="6"
-            elif(self.path.endswith("7")):
-                result+="7"
-            elif(self.path.endswith("8")):
-                result+="8"
-            elif(self.path.endswith("9")):
-                result+="9"
-            elif(self.path.endswith("X")):
-                result+="X"
-            elif(self.path.endswith("+")):
-                result+="+"
-            elif(self.path.endswith("-")):
-                result+="-"
-            elif(self.path.endswith("/")):
-                result+="/"
-            elif(self.path.endswith("del")):
-                result = result[:-1]
-            elif(self.path.endswith("clear")):
-                result = ""
-            elif(self.path.endswith("")):
+            if self.path.find("addName") > -1:
+                print("self.path: ", self.path)
+                str1=self.path.split("=")[1]
+                name=str1.split("&")[0]
+                str1=self.path.split("=")[2]
+                surname=str1.split("&")[0]
+                contact=self.path.split('=')[3]
+                result=addLine(name,surname,contact)
                 htmlWrite()
-            htmlWrite()
+            elif self.path.find("delName") > -1:
+                str1=self.path.split("=")[1]
+                name=str1.split("&")[0]
+                surname=self.path.split("=")[2]
+                result = ""
+                result = deleteContact(name,surname)
+                htmlWrite()
+            elif self.path.find("searchName") > -1:
+                str1=self.path.split("=")[1]
+                name=str1.split("&")[0]
+                surname=self.path.split("=")[2]
+                searchTable = searchContact(name,surname)
+                htmlWrite()
+            elif self.path.find("modifyName") > -1:
+                name = self.path.split("=")[1]
+                name = name.split("&")[0]
+                surname = self.path.split("=")[2]
+                surname = surname.split("&")[0]
+                nName = self.path.split("=")[3]
+                nName = nName.split("&")[0]
+                nSurname = self.path.split("=")[4]
+                nSurname = nSurname.split("&")[0]
+                nNumber = self.path.split("=")[5]
+                print("input ", name, surname, nName, nSurname, nNumber)
+                result = modifyContact(name, surname, nName, nSurname, nNumber)
+                htmlWrite()
 
 # def serve_forever(self):
 #   while not self.stopped:
