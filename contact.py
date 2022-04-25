@@ -13,12 +13,18 @@ HOST = 'localhost'
 PORT = 5550
 result = ""
 searchTable=""
+contactAdd=""
+contactDelete=""
+contactModify=""
 counter=0
 class HTTPR(BaseHTTPRequestHandler):
     def do_GET(self):
         global result
         global counter
         global searchTable
+        global contactAdd
+        global contactDelete
+        global contactModify
         self.send_response(200)
         self.send_header("Content-type","text/html")
         self.end_headers()
@@ -46,9 +52,17 @@ class HTTPR(BaseHTTPRequestHandler):
 
             
             }
-            table.table1{
-                margin-left: auto;
-                margin-right: auto;
+
+            table {
+                background-color:grey;
+                border-collapse: collapse;
+                width: 100%;
+                border: 1px solid #ddd;
+            }
+
+            th, td {
+                text-align: left;
+                padding: 16px;
             }
            
             span.fixed{
@@ -60,7 +74,8 @@ class HTTPR(BaseHTTPRequestHandler):
             
             </style>
             </head>
-            <body>                
+            <body> 
+                <a href="http://localhost/Prac4/Contact-list/index.html">Go home</a>               
                 <h1>Search Contact</h1>
                     <form method="get">
                         <label for="SearchName">Name:</label>
@@ -78,7 +93,7 @@ class HTTPR(BaseHTTPRequestHandler):
                         <label for="addNum">&nbsp;&nbsp;&nbsp;&nbsp;Numbers:</label>
                         <input type="text" id="addNum" name="addNum">&nbsp;&nbsp;&nbsp;&nbsp;
                         <input type="submit" value="add contact"><br/>
-                    </form>
+                    </form> """+ contactAdd +"""
                     
                 <h1>Delete Contact</h1>
                     <form method="get">
@@ -87,7 +102,7 @@ class HTTPR(BaseHTTPRequestHandler):
                         <label for="delSName">&nbsp;&nbsp;&nbsp;&nbsp;Surname:</label>
                         <input type="text" id="delSName" name="delSName">&nbsp;&nbsp;&nbsp;&nbsp;
                         <input type="submit" value="delete contact"><br/>
-                    </form>
+                    </form> """+ contactDelete +"""
                 
                     <h1>Modify Contact</h1>
                     <form method="get">
@@ -102,11 +117,20 @@ class HTTPR(BaseHTTPRequestHandler):
                         <label for="modifyNum">&nbsp;&nbsp;&nbsp;&nbsp;New Numbers:</label>
                         <input type="text" id="modifyNum" name="modifyNum">&nbsp;&nbsp;&nbsp;&nbsp;
                         <input type="submit" value="Modify contact"><br/>
-                    </form>
+                    </form> """+ contactModify +"""
+
+                      <form enctype = "multipart/form-data" action = "python_script.py" method = "post">
+    
+                        <p>Upload File: <input type = "file" name = "filename" /></p>
+ 
+    
+                        <p><input type = "submit" value = "Upload" /></p>
+ 
+                        </form>
 
                 <h1> """+ result + """</h1>
                 <h1>Contact List</h1>
-                    <table class="table1">
+                    <table>
                     <tr>
                         <th>Name</th>
                         <th>Surname</th>
@@ -126,20 +150,31 @@ class HTTPR(BaseHTTPRequestHandler):
                 str1=self.path.split("=")[2]
                 surname=str1.split("&")[0]
                 contact=self.path.split('=')[3]
-                result=addLine(name,surname,contact)
+                contactAdd=addLine(name,surname,contact)
+                result=""
+                searchTable=""
+                contactDelete=""
+                contactModify=""
                 htmlWrite()
             elif self.path.find("delName") > -1:
                 str1=self.path.split("=")[1]
                 name=str1.split("&")[0]
                 surname=self.path.split("=")[2]
                 result = ""
-                result = deleteContact(name,surname)
+                contactDelete = deleteContact(name,surname)
+                searchTable=""
+                contactModify=""
+                contactAdd=""
                 htmlWrite()
             elif self.path.find("searchName") > -1:
                 str1=self.path.split("=")[1]
                 name=str1.split("&")[0]
                 surname=self.path.split("=")[2]
                 searchTable = searchContact(name,surname)
+                result=""
+                contactDelete=""
+                contactModify=""
+                contactAdd=""
                 htmlWrite()
             elif self.path.find("modifyName") > -1:
                 name = self.path.split("=")[1]
@@ -152,16 +187,20 @@ class HTTPR(BaseHTTPRequestHandler):
                 nSurname = nSurname.split("&")[0]
                 nNumber = self.path.split("=")[5]
                 print("input ", name, surname, nName, nSurname, nNumber)
-                result = modifyContact(name, surname, nName, nSurname, nNumber)
+                contactModify = modifyContact(name, surname, nName, nSurname, nNumber)
+                result=""
+                searchTable=""
+                contactDelete=""
+                contactAdd=""
                 htmlWrite()
 
-# def serve_forever(self):
-#   while not self.stopped:
-#     server = HTTPServer((HOST,PORT),HTTPR)
-#     print("server has started")
-#     self.handle_request()
-# def force_stop(self):
-#   self.server_close()
+def serve_forever(self):
+  while not self.stopped:
+    server = HTTPServer((HOST,PORT),HTTPR)
+    print("server has started")
+    self.handle_request()
+def force_stop(self):
+  self.server_close()
 
 server = HTTPServer((HOST,PORT),HTTPR)
 print("server has started")
