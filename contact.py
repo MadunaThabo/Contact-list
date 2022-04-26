@@ -193,7 +193,8 @@ class HTTPR(BaseHTTPRequestHandler):
                 contactDelete=""
                 contactAdd=""
                 htmlWrite()
-
+            else:
+                htmlWrite()
 def serve_forever(self):
   while not self.stopped:
     server = HTTPServer((HOST,PORT),HTTPR)
