@@ -4,13 +4,15 @@ from http.server import HTTPServer
 from delete import deleteContact
 from modify import modifyContact
 
+
 from viewAll import viewAll
 from add import addLine
 from search import searchContact
-
+ 
+import time, threading, socket, socketserver, http.server
 
 HOST = 'localhost'
-PORT = 5550
+PORT = 5555
 result = ""
 searchTable=""
 contactAdd=""
@@ -119,17 +121,8 @@ class HTTPR(BaseHTTPRequestHandler):
                         <input type="submit" value="Modify contact"><br/>
                     </form> """+ contactModify +"""
 
-                      <form enctype = "multipart/form-data" action = "python_script.py" method = "post">
-    
-                        <p>Upload File: <input type = "file" name = "filename" /></p>
- 
-    
-                        <p><input type = "submit" value = "Upload" /></p>
- 
-                        </form>
-
                 <h1> """+ result + """</h1>
-                <h1>Contact List</h1>
+                <br/><h1>Contact List</h1>
                     <table>
                     <tr>
                         <th>Name</th>
@@ -156,6 +149,11 @@ class HTTPR(BaseHTTPRequestHandler):
                 contactDelete=""
                 contactModify=""
                 htmlWrite()
+                result = ""
+                searchTable=""
+                contactAdd=""
+                contactDelete=""
+                contactModify=""
             elif self.path.find("delName") > -1:
                 str1=self.path.split("=")[1]
                 name=str1.split("&")[0]
@@ -166,6 +164,11 @@ class HTTPR(BaseHTTPRequestHandler):
                 contactModify=""
                 contactAdd=""
                 htmlWrite()
+                result = ""
+                searchTable=""
+                contactAdd=""
+                contactDelete=""
+                contactModify=""
             elif self.path.find("searchName") > -1:
                 str1=self.path.split("=")[1]
                 name=str1.split("&")[0]
@@ -176,6 +179,11 @@ class HTTPR(BaseHTTPRequestHandler):
                 contactModify=""
                 contactAdd=""
                 htmlWrite()
+                result = ""
+                searchTable=""
+                contactAdd=""
+                contactDelete=""
+                contactModify=""
             elif self.path.find("modifyName") > -1:
                 name = self.path.split("=")[1]
                 name = name.split("&")[0]
@@ -193,20 +201,112 @@ class HTTPR(BaseHTTPRequestHandler):
                 contactDelete=""
                 contactAdd=""
                 htmlWrite()
+                result = ""
+                searchTable=""
+                contactAdd=""
+                contactDelete=""
+                contactModify=""
             else:
                 htmlWrite()
-def serve_forever(self):
-  while not self.stopped:
-    server = HTTPServer((HOST,PORT),HTTPR)
-    print("server has started")
-    self.handle_request()
-def force_stop(self):
-  self.server_close()
+                result = ""
+                searchTable=""
+                contactAdd=""
+                contactDelete=""
+                contactModify=""
+                
 
-server = HTTPServer((HOST,PORT),HTTPR)
-print("server has started")
-print("http://localhost:"+str(PORT))
-server.serve_forever()
-server.server_close()
-       
-            
+
+
+
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from socketserver import ThreadingMixIn
+import threading
+import ssl     
+class ThreadingSimpleServer(ThreadingMixIn,HTTPServer):
+    pass
+
+if __name__ == "__main__":
+    webServer = ThreadingSimpleServer((HOST, PORT), HTTPR)
+    print("Server started http://%s:%s" % (HOST, PORT))
+    try:
+        print("serving server")
+        webServer.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+    webServer.server_close()
+    print("Server stopped.")
+
+
+
+
+
+# import socket
+# from _thread import *	
+
+# s = socket.socket()	
+# ThreadCount = 0
+# s.bind((HOST, PORT))
+
+# # waiting for a client to connect
+# s.listen(5)
+# def multi_threaded_client(c):       
+#     while True:
+#         print ('got connection from addr', c)
+#         print("http://localhost:"+str(PORT))
+#         HTTPR(BaseHTTPRequestHandler)
+#         # closing the connection
+
+
+# while True:
+#     # accept connection
+#     Client, address = s.accept()
+#     print('Connected to: ' + address[0] + ':' + str(address[1]))
+#     start_new_thread(multi_threaded_client, (Client, ))
+#     ThreadCount += 1
+#     print('Terminal Number: ' + str(ThreadCount))
+# s.close()
+
+
+
+# import http.server as SimpleHTTPServer
+# import http.server as BaseHTTPServer
+# import socketserver as SocketServer
+# import sys
+# import os
+# class ThreadingSimpleServer(SocketServer.ThreadingMixIn,BaseHTTPServer.HTTPServer):
+#     pass
+
+# if sys.argv[1:]:
+#     port = int(sys.argv[1])
+# else:
+#     port = 8000
+
+# server = ThreadingSimpleServer(('', port), SimpleHTTPServer.SimpleHTTPRequestHandler)
+# print("Serving HTTP on 0.0.0.0 port",port,"...")
+
+# try:
+#     while 1:
+#         sys.stdout.flush()
+#         server.handle_request()
+# except KeyboardInterrupt:
+#     print("Finished")
+# 
+# 
+# 
+# 
+# 
+# 
+# # def serve_forever(self):
+#   while not self.stopped:
+#     server = HTTPServer((HOST,PORT),HTTPR)
+#     print("server has started")
+#     self.handle_request()
+# def force_stop(self):
+#   self.server_close()
+
+# server = HTTPServer((HOST,PORT),HTTPR)
+# print("server has started")
+# print("http://localhost:"+str(PORT))
+# server.serve_forever()
+# server.server_close()
