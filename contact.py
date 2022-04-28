@@ -1,3 +1,6 @@
+# u19027372 Simphiwe Ndlovu
+# u19116498 Thabo Maduna
+
 from http import server
 from http.server import HTTPServer,BaseHTTPRequestHandler
 from http.server import HTTPServer
@@ -239,7 +242,7 @@ if __name__ == "__main__":
 
 
 
-
+#alternatives
 
 # import socket
 # from _thread import *	
