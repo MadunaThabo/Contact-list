@@ -1,5 +1,4 @@
-# u19027372 Simphiwe Ndlovu
-# u19116498 Thabo Maduna
+#by Simphiwe Ndlovu and Thabo Maduna
 
 from http import server
 from http.server import HTTPServer,BaseHTTPRequestHandler
