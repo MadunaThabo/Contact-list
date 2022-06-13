@@ -1,3 +1,3 @@
 # Contact-list
 
-Contact interface
+Contact interface using sockets
